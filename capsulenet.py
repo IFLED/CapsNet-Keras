@@ -200,6 +200,19 @@ def load_mnist():
     return (x_train, y_train), (x_test, y_test)
 
 
+def load_cifar10():
+    # the data, shuffled and split between train and test sets
+    from keras.datasets import cifar10
+    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+
+    train_b, h, w, c = x_train.shape
+    x_train = x_train.reshape(train_b, h, w, c).astype('float32') / 255.
+    x_test = x_test.reshape(-1, w, h, c).astype('float32') / 255.
+    y_train = to_categorical(y_train.astype('float32'))
+    y_test = to_categorical(y_test.astype('float32'))
+    return (x_train, y_train), (x_test, y_test)
+
+
 if __name__ == "__main__":
     import os
     import argparse
@@ -236,7 +249,7 @@ if __name__ == "__main__":
         os.makedirs(args.save_dir)
 
     # load data
-    (x_train, y_train), (x_test, y_test) = load_mnist()
+    (x_train, y_train), (x_test, y_test) = load_cifar10()
 
     # define model
     model, eval_model, manipulate_model = CapsNet(input_shape=x_train.shape[1:],
