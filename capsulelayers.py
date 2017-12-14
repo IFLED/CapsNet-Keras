@@ -169,14 +169,14 @@ class CapsuleLayer(layers.Layer):
                 # outputs.shape=[None, num_capsule, dim_capsule]
                 outputs = squash(K.batch_dot(c, inputs_hat, [2, 2]))  # [None, 10, 16]
             else:  # Otherwise, use `inputs_hat_stopped` to update `b`. No gradients flow on this path.
-                outputs = squash(K.batch_dot(c, inputs_hat_stopped, [2, 2]))
+                outputs = squash(K.batch_dot(c, inputs_hat, [2, 2]))
 
                 # outputs.shape =  [None, num_capsule, dim_capsule]
                 # inputs_hat.shape=[None, num_capsule, input_num_capsule, dim_capsule]
                 # The first two dimensions as `batch` dimension,
                 # then matmal: [dim_capsule] x [input_num_capsule, dim_capsule]^T -> [input_num_capsule].
                 # b.shape=[batch_size, num_capsule, input_num_capsule]
-                b += K.batch_dot(outputs, inputs_hat_stopped, [2, 3])
+                b += K.batch_dot(outputs, inputs_hat, [2, 3])
         # End: Routing algorithm -----------------------------------------------------------------------#
 
         return outputs
