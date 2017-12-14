@@ -158,7 +158,7 @@ class CapsuleLayer(layers.Layer):
         assert self.routings > 0, 'The routings should be > 0.'
         for i in range(self.routings):
             # c.shape=[batch_size, num_capsule, input_num_capsule]
-            c = tf.nn.softmax(b, dim=1)
+            c = tf.nn.sigmoid(b)
 
             # At last iteration, use `inputs_hat` to compute `outputs` in order to backpropagate gradient
             if i == self.routings - 1:
