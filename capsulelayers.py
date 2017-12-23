@@ -153,12 +153,16 @@ class CapsuleLayer(layers.Layer):
         
         # The prior for coupling coefficient, initialized as zeros.
         # b.shape = [None, self.num_capsule, self.input_num_capsule].
-        b = tf.zeros(shape=[K.shape(inputs_hat)[0], self.num_capsule, self.input_num_capsule])
+        batch_size = K.shape(inputs_hat)[0]
+        b = tf.zeros(shape=[batch_size, self.num_capsule, self.input_num_capsule])
+        b_noise = tf.zeros(shape=[batch_size, 1, self.input_num_capsule])
 
         assert self.routings > 0, 'The routings should be > 0.'
         for i in range(self.routings):
             # c.shape=[batch_size, num_capsule, input_num_capsule]
-            c = tf.nn.softmax(b, dim=1)
+            b_total = tf.concat([b, b_noise], axis=1)
+            c_total = tf.nn.softmax(b_total, dim=1)
+            c = tf.slice(c_total, [0, 0, 0], [batch_size, self.num_capsule, self.input_num_capsule])
 
             # At last iteration, use `inputs_hat` to compute `outputs` in order to backpropagate gradient
             if i == self.routings - 1:
